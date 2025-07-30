@@ -14,7 +14,7 @@ export function PaginaPrincipal() {
                 </div>
             </div>
             <div className={styles.rightCard}>
-                <h1 className={styles.titulo}>Bem-vindo ao Clima App</h1>
+                <h1 className={styles.titulo}>Bem-vindo ao Nimbus</h1>
                 <p className={styles.descricao}>Aqui você pode consultar as condições climáticas atuais de qualquer cidade do mundo.</p>
                 <p className={styles.instrucoes}>Digite o nome da cidade no campo de busca para obter as informações climáticas.</p>
             </div>
