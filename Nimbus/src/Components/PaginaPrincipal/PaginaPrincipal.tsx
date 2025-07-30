@@ -15,6 +15,7 @@ interface WeatherResponse {
     location: {
         name: string;
         country: string;
+        tz_id: string;
     };
 
     current: {
@@ -22,19 +23,54 @@ interface WeatherResponse {
         condition: {
             text: string;
         }
+        last_updated_epoch: number;
     };
 }
 
 export function PaginaPrincipal() {
     const [cidade, setCidade] = useState('');
+    const [nomePais, setNomePais] = useState('');
     const [nomeCidade, setNomeCidade] = useState('');
     const [error, setError] = useState('');
     const [temperatura, setTemperatura] = useState <number | null>(null);
     const [descricao, setDescricao] = useState('');
+    const [dataHora, setDataHora] = useState('');
+    const [imagemCidade, setImagemCidade] = useState<string | null>(null);
 
     // Chave da API e URL
     const api_key = "7390a3ebcad0412a96a161627252907";
+    const unsplash_key = "OofVb_f66byugffRDYq0IfViKMn1zc2-AMGDDRcBgsM";
     const url = `https://api.weatherapi.com/v1/current.json?key=${api_key}&q=${cidade}&lang=pt`;
+
+    // Função para calcular o dia da semana e a hora com base no fuso horário
+    function calcularHoraLocal(timestamp: number, fusoHorario: string) {
+        const date = new Date(timestamp * 1000); // Converte o timestamp para Date
+        const opcoes = {
+            weekday: 'long',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: fusoHorario,
+        };
+
+        const formatter = new Intl.DateTimeFormat('pt-BR', opcoes);
+        const dataFormatada = formatter.format(date);
+        
+        return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+    }
+
+    // Buscar imagem de uma cidade
+    async function buscarImagemCidade(cidade: string) {
+        const urlUnsplash = `https://api.unsplash.com/search/photos?query=${cidade}&client_id=${unsplash_key}&orientation=landscape&per_page=1`;
+
+        try {
+            const resposta = await axios.get(urlUnsplash);
+            const imagem = resposta.data.results[0];
+            return imagem?.urls?.regular;
+        } catch (erro) {
+            console.error("Erro ao buscar imagem: ", erro);
+            return null;
+        }
+    }
 
     async function buscarClima() {
         if (!cidade) return;
@@ -45,19 +81,34 @@ export function PaginaPrincipal() {
             // Buscar informações com base na cidade
             setTemperatura(resposta.data.current.temp_c);
             setDescricao(resposta.data.current.condition.text);
-
             setNomeCidade(resposta.data.location.name);
-            setError("");
+
+            const nomePaisAPI = resposta.data.location.country;
+            if (nomePaisAPI === "United States of America") {
+                setNomePais("USA");
+            } else {
+                setNomePais(nomePaisAPI);
+            };
+
+            // Buscar a data e a hora com base na cidade
+            const horaLocal = calcularHoraLocal(resposta.data.current.last_updated_epoch, resposta.data.location.tz_id);
+            setDataHora(horaLocal);
+
+            // Bucar imagem da cidade
+            const imagem = await buscarImagemCidade(resposta.data.location.name);
+            setImagemCidade(imagem);
         } catch {
             setError("Cidade não encontrada!");
-            
             setTemperatura(null);
             setDescricao('');
-
             setNomeCidade("");
+            setNomePais("");
+            setImagemCidade(null);
         }
     }
 
+
+    // Função para pegar corretamente cada ícone
     function obterIconeClima(descricao: string) {
         const descricaoLower = descricao.toLocaleLowerCase();
 
@@ -80,7 +131,7 @@ export function PaginaPrincipal() {
         if (descricaoLower === "nevoeiro" || descricaoLower === "neblina") {
             return iconeNevoeiro;
         }
-        if (descricaoLower === "chuva fraca") {
+        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada") {
             return iconeChuvaFraca;
         }
         if (descricaoLower === "possibilidade de chuva irregular") {
@@ -120,6 +171,21 @@ export function PaginaPrincipal() {
                             <p className={styles.celsius}>ºC</p>
                         </div>
                     )}
+                    {dataHora && 
+                        <div className={styles.containerDataHora}>
+                            <p className={styles.dataHora}>{dataHora}</p>
+                        </div>
+                    }
+                    {imagemCidade && (
+                        <div className={styles.imagemContainer}>
+                            <div className={styles.imagemContent}>
+                                <img className={styles.imagemCidade} src={imagemCidade} alt={`Imagem de ${nomeCidade}`}/>
+                                <div className={styles.overlay}>
+                                    <p className={styles.textoOverlay}>{nomeCidade}, {nomePais}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}  
                 </div>
             </div>
             <div className={styles.rightCard}>
