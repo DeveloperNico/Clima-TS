@@ -130,7 +130,7 @@ export function PaginaPrincipal() {
         if (descricaoLower === "nevoeiro" || descricaoLower === "neblina") {
             return iconeNevoeiro;
         }
-        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada") {
+        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada" || descricaoLower === "chuvisco irregular") {
             return iconeChuvaFraca;
         }
         if (descricaoLower === "possibilidade de chuva irregular") {
