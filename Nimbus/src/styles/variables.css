@@ -5,4 +5,7 @@
     --color-white: #FFFFFF;
     --color-black: #000000;
     --color-gray: #f0f0f0;
+
+    /* Fontes */
+    --font-main: 'Poppins', sans-serif;
 }

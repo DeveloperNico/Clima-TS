@@ -17,6 +17,7 @@ html, body {
     background-color: var(--color-white);
     flex: 1;
     min-width: 300px;
+    padding: 40px;
     border-radius: 40px 0 0 40px;
 }
 
@@ -25,4 +26,24 @@ html, body {
     flex: 2;
     min-width: 600px;
     border-radius: 0 40px 40px 0;
+}
+
+.searchContainer {
+    /* border: 1px solid red; */
+    display: flex;
+    gap: 15px;
+}
+
+.input {
+    border: none;
+    width: 100%;
+    padding-left: 10px;
+    outline: none;
+    font-size: 16px;
+
+    &::placeholder {
+        color: var(--color-black);
+        font-size: 16px;
+        font-weight: 500;
+    }
 }
