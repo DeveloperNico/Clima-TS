@@ -114,7 +114,12 @@ export function PaginaPrincipal() {
                             )}
                         </div>
                     )}
-                    {temperatura !== null && (<p style={{marginTop: '20px'}}>Temperatura em {nomeCidade}: {temperatura} ºC</p>)}
+                    {temperatura !== null && (
+                        <div className={styles.temperatura}>
+                            <p>{temperatura}</p>
+                            <p className={styles.celsius}>ºC</p>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className={styles.rightCard}>

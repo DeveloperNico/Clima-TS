@@ -4,11 +4,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: var(--font-main);
 }
 
 .App {
-    background-color: var(--background-color);
+    background: var(--background-gradient);
     height: 100vh;
     display: flex;
     justify-content: center;
