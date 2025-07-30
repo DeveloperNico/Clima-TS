@@ -107,7 +107,6 @@ export function PaginaPrincipal() {
         }
     }
 
-
     // Função para pegar corretamente cada ícone
     function obterIconeClima(descricao: string) {
         const descricaoLower = descricao.toLocaleLowerCase();
