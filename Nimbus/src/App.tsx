@@ -1,4 +1,4 @@
-import { Clima } from "./Components/Clima";
+import { Clima } from "./Components/Clima/Clima";
 
 function App() {
   return (
