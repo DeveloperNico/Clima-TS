@@ -1,0 +1,28 @@
+@import "../../styles/variables.css";
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.leftCard {
+    background-color: var(--color-white);
+    flex: 1;
+    min-width: 300px;
+    border-radius: 40px 0 0 40px;
+}
+
+.rightCard {
+    background-color: var(--color-gray);
+    flex: 2;
+    min-width: 600px;
+    border-radius: 0 40px 40px 0;
+}

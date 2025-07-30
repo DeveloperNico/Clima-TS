@@ -1,4 +1,4 @@
-import { use, useState } from "react"
+import { useState } from "react"
 import axios from "axios"
 
 interface WeatherResponse {

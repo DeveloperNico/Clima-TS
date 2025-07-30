@@ -1,8 +1,13 @@
 import { Clima } from "./Components/Clima/Clima";
+import { PaginaPrincipal } from "./Components/PaginaPrincipal/PaginaPrincipal";
+import "./App.css";
 
 function App() {
   return (
-    <Clima />
+    <div className="App">
+      {/* <Clima /> */}
+      <PaginaPrincipal />
+    </div>
   )
 }
 
