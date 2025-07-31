@@ -49,11 +49,12 @@ export function PaginaPrincipal() {
     const [dataHora, setDataHora] = useState('');
     const [imagemCidade, setImagemCidade] = useState<string | null>(null);
     const [chanceChuva, setChanceChuva] = useState<number | null>(null);
+    const [previsaoSemana, setPrevisaSemana] = useState<WeatherResponse["forecast"]["forecastday"]>([]);
 
     // Chave da API e URL
     const api_key = "7390a3ebcad0412a96a161627252907";
     const unsplash_key = "OofVb_f66byugffRDYq0IfViKMn1zc2-AMGDDRcBgsM";
-    const url = `https://api.weatherapi.com/v1/forecast.json?key=${api_key}&q=${cidade}&lang=pt&days=1`;
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${api_key}&q=${cidade}&lang=pt&days=7`;
 
     // Função para calcular o dia da semana e a hora com base no fuso horário
     function calcularHoraLocal(timestamp: number, fusoHorario: string) {
@@ -94,6 +95,7 @@ export function PaginaPrincipal() {
             // Buscar informações com base na cidade
             setTemperatura(resposta.data.current.temp_c);
             setNomeCidade(resposta.data.location.name);
+            setPrevisaSemana(resposta.data.forecast.forecastday);
 
             if (resposta.data.current.condition.text === "Sol") {
                 setDescricao("Ensolarado");
@@ -151,7 +153,7 @@ export function PaginaPrincipal() {
         if (descricaoLower === "nevoeiro" || descricaoLower === "neblina") {
             return iconeNevoeiro;
         }
-        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada" || descricaoLower === "chuvisco irregular" || descricao === "Aguaceiros fracos") {
+        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada" || descricaoLower === "chuvisco irregular" || descricaoLower === "aguaceiros fracos" || descricaoLower === "chuvisco") {
             return iconeChuvaFraca;
         }
         if (descricaoLower === "possibilidade de chuva irregular") {
@@ -209,7 +211,7 @@ export function PaginaPrincipal() {
                     {chanceChuva !== null && (
                         <div className={styles.probabilidadeChuva}>
                             <img src={iconeChuva} alt="Icone de chuva" />
-                            <p className={styles.chanceChuva}>Chance de chuva: {chanceChuva} %</p>
+                            <p className={styles.chanceChuva}>Chance de chuva - {chanceChuva}%</p>
                         </div>
                     )}
                     {imagemCidade && (
@@ -225,9 +227,32 @@ export function PaginaPrincipal() {
                 </div>
             </div>
             <div className={styles.rightCard}>
-                <h1 className={styles.titulo}>Bem-vindo ao Nimbus</h1>
-                <p className={styles.descricao}>Aqui você pode consultar as condições climáticas atuais de qualquer cidade do mundo.</p>
-                <p className={styles.instrucoes}>Digite o nome da cidade no campo de busca para obter as informações climáticas.</p>
+                <div className={styles.cabecalho}>
+                    <h2>Previsão da semana</h2>
+                </div>
+                <div className={styles.previsaoSemana}>
+                    {previsaoSemana.map((dia, index) => {
+                        const data = new Date(dia.date);
+                        const nomeDia = data.toLocaleDateString('pt-BR', { weekday: 'long' });
+                        const icone = obterIconeClima(dia.day.condition.text);
+
+                        return (
+                            <div className={styles.containerPrevisao}>
+                                <p className={styles.nomeDia}>{nomeDia.charAt(0).toUpperCase() + nomeDia.slice(1)}</p>
+                                <div key={index} className={styles.card}>
+                                    {icone && (
+                                        <img
+                                        src={icone}
+                                        alt={`Ícone de clima para ${dia.day.condition.text}`}
+                                        className={styles.iconeClimaPrevisao}
+                                        />
+                                    )}
+                                    <p className={styles.temperaturaMaxMin}>{dia.day.maxtemp_c}°C</p>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     )

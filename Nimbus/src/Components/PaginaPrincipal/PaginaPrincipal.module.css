@@ -5,6 +5,7 @@ html, body {
     margin: 0;
 }
 
+/* Parte esquerda do card */
 .container {
     display: flex;
     justify-content: space-between;
@@ -26,6 +27,7 @@ html, body {
     background-color: var(--color-gray);
     flex: 2;
     min-width: 600px;
+    padding: 40px;
     border-radius: 0 40px 40px 0;
 }
 
@@ -156,4 +158,38 @@ html, body {
         width: 20px;
         height: 20px;
     }
+}
+
+/* Parte direita do card */
+.cabecalho h2 {
+    font-size: 20px;
+    width: 211px;
+    height: 30px;
+    border-bottom: 2px solid var(--color-black);
+}
+
+.previsaoSemana {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.card {
+    background-color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100px;
+    height: 120px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.iconeClimaPrevisao {
+    height: 60px;
+    width: 60px;
 }
