@@ -10,6 +10,7 @@ import iconeNublado from '../../assets/Icones/Nublado.png';
 import iconeNevoeiro from '../../assets/Icones/Nevoeiro.png';
 import iconeChuvaFraca from '../../assets/Icones/Chuva-fraca.png';
 import iconePossibilidadeChuva from '../../assets/Icones/Possibilidade-chuva.jpg';
+import iconeChuva from '../../assets/Icones/Icone-Chuva.svg';
 
 interface WeatherResponse {
     location: {
@@ -17,13 +18,24 @@ interface WeatherResponse {
         country: string;
         tz_id: string;
     };
-
     current: {
         temp_c: number;
         condition: {
             text: string;
         }
         last_updated_epoch: number;
+    };
+    forecast: {
+        forecastday: {
+            day: {
+                daily_chance_of_rain: number;
+                condition: {
+                    text: string;
+                };
+                maxtemp_c: number;
+                mintemp_c: number;
+            }
+        }[];
     };
 }
 
@@ -36,11 +48,12 @@ export function PaginaPrincipal() {
     const [descricao, setDescricao] = useState('');
     const [dataHora, setDataHora] = useState('');
     const [imagemCidade, setImagemCidade] = useState<string | null>(null);
+    const [chanceChuva, setChanceChuva] = useState<number | null>(null);
 
     // Chave da API e URL
     const api_key = "7390a3ebcad0412a96a161627252907";
     const unsplash_key = "OofVb_f66byugffRDYq0IfViKMn1zc2-AMGDDRcBgsM";
-    const url = `https://api.weatherapi.com/v1/current.json?key=${api_key}&q=${cidade}&lang=pt`;
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${api_key}&q=${cidade}&lang=pt&days=1`;
 
     // Função para calcular o dia da semana e a hora com base no fuso horário
     function calcularHoraLocal(timestamp: number, fusoHorario: string) {
@@ -80,8 +93,13 @@ export function PaginaPrincipal() {
 
             // Buscar informações com base na cidade
             setTemperatura(resposta.data.current.temp_c);
-            setDescricao(resposta.data.current.condition.text);
             setNomeCidade(resposta.data.location.name);
+
+            if (resposta.data.current.condition.text === "Sol") {
+                setDescricao("Ensolarado");
+            } else {
+                setDescricao(resposta.data.current.condition.text);
+            }
 
             const nomePaisAPI = resposta.data.location.country;
             if (nomePaisAPI === "United States of America") {
@@ -93,6 +111,9 @@ export function PaginaPrincipal() {
             // Buscar a data e a hora com base na cidade
             const horaLocal = calcularHoraLocal(resposta.data.current.last_updated_epoch, resposta.data.location.tz_id);
             setDataHora(horaLocal);
+
+            // Buscar possibilidade de chuva
+            setChanceChuva(resposta.data.forecast.forecastday[0].day.daily_chance_of_rain);
 
             // Bucar imagem da cidade
             const imagem = await buscarImagemCidade(resposta.data.location.name);
@@ -130,7 +151,7 @@ export function PaginaPrincipal() {
         if (descricaoLower === "nevoeiro" || descricaoLower === "neblina") {
             return iconeNevoeiro;
         }
-        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada" || descricaoLower === "chuvisco irregular") {
+        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada" || descricaoLower === "chuvisco irregular" || descricao === "Aguaceiros fracos") {
             return iconeChuvaFraca;
         }
         if (descricaoLower === "possibilidade de chuva irregular") {
@@ -151,6 +172,11 @@ export function PaginaPrincipal() {
                         placeholder="Pesquise uma cidade . . ." 
                         value={cidade} 
                         onChange={(e) => setCidade(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                buscarClima();
+                            }
+                        }}
                     />
                 </div>
                 <div>
@@ -175,6 +201,17 @@ export function PaginaPrincipal() {
                             <p className={styles.dataHora}>{dataHora}</p>
                         </div>
                     }
+                    {descricao && 
+                        <div className={styles.descricao}>
+                            <p>{descricao}</p>
+                        </div>
+                    }
+                    {chanceChuva !== null && (
+                        <div className={styles.probabilidadeChuva}>
+                            <img src={iconeChuva} alt="Icone de chuva" />
+                            <p className={styles.chanceChuva}>Chance de chuva: {chanceChuva} %</p>
+                        </div>
+                    )}
                     {imagemCidade && (
                         <div className={styles.imagemContainer}>
                             <div className={styles.imagemContent}>
