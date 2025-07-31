@@ -21,6 +21,9 @@ interface WeatherResponse {
     current: {
         temp_c: number;
         humidity: number;
+        wind_kph: number;
+        wind_degree: number;
+        vis_km: number;
         condition: {
             text: string;
         }
@@ -47,6 +50,9 @@ export function PaginaPrincipal() {
     const [error, setError] = useState('');
     const [temperatura, setTemperatura] = useState <number | null>(null);
     const [umidade, setUmidade] = useState<number | null>(null);
+    const [velocidadeVento, setVelocidadeVento] = useState<number | null>(null);
+    const [visibilidade, setVisibilidade] = useState<number | null>(null);
+    const [windDegree, setWindDegree] = useState<number | null>(null);
     const [descricao, setDescricao] = useState('');
     const [dataHora, setDataHora] = useState('');
     const [imagemCidade, setImagemCidade] = useState<string | null>(null);
@@ -97,6 +103,9 @@ export function PaginaPrincipal() {
             // Buscar informações com base na cidade
             setTemperatura(resposta.data.current.temp_c);
             setUmidade(resposta.data.current.humidity);
+            setVelocidadeVento(resposta.data.current.wind_kph);
+            setVisibilidade(resposta.data.current.vis_km);
+            setWindDegree(resposta.data.current.wind_degree);
             setNomeCidade(resposta.data.location.name);
             setPrevisaSemana(resposta.data.forecast.forecastday);
 
@@ -127,6 +136,8 @@ export function PaginaPrincipal() {
             setError("Cidade não encontrada!");
             setTemperatura(null);
             setUmidade(null);
+            setVelocidadeVento(null);
+            setWindDegree(null);
             setDescricao('');
             setNomeCidade("");
             setNomePais("");
@@ -180,6 +191,26 @@ export function PaginaPrincipal() {
         } else {
             return 'Muito alta 😓';
         }
+    }
+
+    function interpretarVisibilidade(visibilidade: number | null) {
+        if (visibilidade === null) return '';
+
+        if (visibilidade >= 10) {
+            return 'Visibilidade excelente 🌤️';
+        } else if (visibilidade >= 5) {
+            return 'Visibilidade boa ☁️';
+        } else if (visibilidade >= 2) {
+            return 'Visibilidade moderada 🌫️';
+        } else {
+            return 'Visibilidade ruim 🌧️';
+        }
+    }
+    
+    function windDegreeToText(degree: number) {
+        const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+        const index = Math.round(degree / 22.5) % 16;
+        return directions[index];
     }
 
     return (
@@ -278,17 +309,38 @@ export function PaginaPrincipal() {
                 <div className={styles.destaquesHoje}>
                     <h2>Destaques de hoje</h2>
                 </div>
-                <div className={styles.umidadeCard}>
-                    <h3>Umidade</h3>
-                    {umidade && (
-                        <>
-                            <div className={styles.umidade}>
-                                <p className={styles.umidadeText}>{umidade}</p>
-                                <p className={styles.porcentagem}>%</p>
+                <div className={styles.cardsDestaques}>
+                    <div className={styles.umidadeCard}>
+                        <h3>Umidade</h3>
+                        {umidade !== null && (
+                            <div className={styles.umidadeContainer}>
+                                <div className={styles.umidadeInfo}>
+                                    <div className={styles.umidade}>
+                                        <p className={styles.umidadeText}>{umidade}</p>
+                                        <p className={styles.porcentagem}>%</p>
+                                    </div>
+                                    <p className={styles.qualidadeAr}>{interpretarUmidade(umidade)}</p>
+                                </div>
+                                <div className={styles.umidadeBarra}>
+                                    <div className={styles.umidadeIndicador} style={{ top: `${120 - (umidade * 1.2)}px` }}/>
+                                </div>
                             </div>
-                            <p className={styles.qualidadeAr}>{interpretarUmidade(umidade)}</p>
-                        </>
-                    )}
+                        )}
+                    </div>
+                    <div className={styles.velocidadeVentoCard}>
+                        <h3>Velocidade do vento</h3>
+                        {velocidadeVento !== null && (
+                            <div className={styles.velocidadeVentoContainer}>
+                                <div className={styles.velocidadeVentoInfo}>
+                                    <div className={styles.velocidadeVento}>
+                                        <p className={styles.velocidadeText}>{velocidadeVento}</p>
+                                        <p className={styles.velocidadePorHora}>Km/h</p>
+                                    </div>
+                                    <p className={styles.direcaoVento}>{windDegreeToText(windDegree)}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
