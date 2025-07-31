@@ -20,6 +20,7 @@ interface WeatherResponse {
     };
     current: {
         temp_c: number;
+        humidity: number;
         condition: {
             text: string;
         }
@@ -45,6 +46,7 @@ export function PaginaPrincipal() {
     const [nomeCidade, setNomeCidade] = useState('');
     const [error, setError] = useState('');
     const [temperatura, setTemperatura] = useState <number | null>(null);
+    const [umidade, setUmidade] = useState<number | null>(null);
     const [descricao, setDescricao] = useState('');
     const [dataHora, setDataHora] = useState('');
     const [imagemCidade, setImagemCidade] = useState<string | null>(null);
@@ -94,6 +96,7 @@ export function PaginaPrincipal() {
 
             // Buscar informações com base na cidade
             setTemperatura(resposta.data.current.temp_c);
+            setUmidade(resposta.data.current.humidity);
             setNomeCidade(resposta.data.location.name);
             setPrevisaSemana(resposta.data.forecast.forecastday);
 
@@ -123,9 +126,11 @@ export function PaginaPrincipal() {
         } catch {
             setError("Cidade não encontrada!");
             setTemperatura(null);
+            setUmidade(null);
             setDescricao('');
             setNomeCidade("");
             setNomePais("");
+            setDataHora("");
             setImagemCidade(null);
         }
     }
@@ -161,6 +166,20 @@ export function PaginaPrincipal() {
         }
 
         return null;
+    }
+
+    function interpretarUmidade(umidade: number | null) {
+        if (umidade === null) return '';
+
+        if (umidade <= 30) {
+            return 'Seco 🥵';
+        } else if (umidade <= 60) {
+            return 'Normal 🙂';
+        } else if (umidade <= 80) {
+            return 'Elevada 😐';
+        } else {
+            return 'Muito alta 😓';
+        }
     }
 
     return (
@@ -258,6 +277,18 @@ export function PaginaPrincipal() {
                 </div>
                 <div className={styles.destaquesHoje}>
                     <h2>Destaques de hoje</h2>
+                </div>
+                <div className={styles.umidadeCard}>
+                    <h3>Umidade</h3>
+                    {umidade && (
+                        <>
+                            <div className={styles.umidade}>
+                                <p className={styles.umidadeText}>{umidade}</p>
+                                <p className={styles.porcentagem}>%</p>
+                            </div>
+                            <p className={styles.qualidadeAr}>{interpretarUmidade(umidade)}</p>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
