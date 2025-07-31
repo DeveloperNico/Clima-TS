@@ -247,11 +247,17 @@ export function PaginaPrincipal() {
                                         className={styles.iconeClimaPrevisao}
                                         />
                                     )}
-                                    <p className={styles.temperaturaMaxMin}>{dia.day.maxtemp_c}°C</p>
+                                    <div className={styles.temperaturaMaxMin}>
+                                        <p className={styles.temperaturaMax}>{dia.day.maxtemp_c}º</p>
+                                        <p className={styles.temperaturaMin}>{dia.day.mintemp_c}°</p>
+                                    </div>
                                 </div>
                             </div>
                         );
                     })}
+                </div>
+                <div className={styles.destaquesHoje}>
+                    <h2>Destaques de hoje</h2>
                 </div>
             </div>
         </div>

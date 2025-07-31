@@ -193,3 +193,24 @@ html, body {
     height: 60px;
     width: 60px;
 }
+
+.temperaturaMaxMin {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+    font-family: var(--font-temperatura);
+}
+
+.temperaturaMin {
+    font-size: 12px;
+    text-align: center;
+    color: #a5a4a4;
+}
+
+.destaquesHoje h2 {
+    font-size: 20px;
+    width: 211px;
+    height: 30px;
+    margin-top: 40px;
+} 
