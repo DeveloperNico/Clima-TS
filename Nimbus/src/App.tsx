@@ -1,4 +1,3 @@
-import { Clima } from "./Components/Clima/Clima";
 import { PaginaPrincipal } from "./Components/PaginaPrincipal/PaginaPrincipal";
 import "./App.css";
 

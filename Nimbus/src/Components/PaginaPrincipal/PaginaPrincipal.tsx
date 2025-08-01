@@ -23,6 +23,7 @@ interface WeatherResponse {
         humidity: number;
         wind_kph: number;
         wind_degree: number;
+        feelslike_c: number;
         vis_km: number;
         condition: {
             text: string;
@@ -53,6 +54,7 @@ export function PaginaPrincipal() {
     const [umidade, setUmidade] = useState<number | null>(null);
     const [velocidadeVento, setVelocidadeVento] = useState<number | null>(null);
     const [visibilidade, setVisibilidade] = useState<number | null>(null);
+    const [sensacaoTermica, setSensacaoTermica] = useState<number | null>(null);
     const [windDegree, setWindDegree] = useState<number | null>(null);
     const [descricao, setDescricao] = useState('');
     const [dataHora, setDataHora] = useState('');
@@ -106,6 +108,7 @@ export function PaginaPrincipal() {
             setUmidade(resposta.data.current.humidity);
             setVelocidadeVento(resposta.data.current.wind_kph);
             setVisibilidade(resposta.data.current.vis_km);
+            setSensacaoTermica(resposta.data.current.feelslike_c);
             setWindDegree(resposta.data.current.wind_degree);
             setNomeCidade(resposta.data.location.name);
             setPrevisaSemana(resposta.data.forecast.forecastday);
@@ -133,6 +136,8 @@ export function PaginaPrincipal() {
             // Bucar imagem da cidade
             const imagem = await buscarImagemCidade(resposta.data.location.name);
             setImagemCidade(imagem);
+
+            setError('');
         } catch {
             setError("Cidade não encontrada!");
             setTemperatura(null);
@@ -358,6 +363,20 @@ export function PaginaPrincipal() {
                                 </div>
                                 <div className={styles.visibilidadeBarra}>
                                     <div className={styles.visibilidadeIndicador} style={{ top: `${120 - (visibilidade * 1.2)}px` }}/>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={styles.sensacaoTermicaCard}>
+                        <h3>Sensação Térmica</h3>
+                        {sensacaoTermica !== null && (
+                            <div className={styles.sensacaoTermicaContainer}>
+                                <div className={styles.sensacaoTermicaInfo}>
+                                    <div className={styles.sensacaoTermica}>
+                                        <p className={styles.sensacaoTermicaText}>{sensacaoTermica}</p>
+                                        <p className={styles.sensacaoTermicaCelsius}>ºC</p>
+                                    </div>
                                 </div>
                             </div>
                         )}
