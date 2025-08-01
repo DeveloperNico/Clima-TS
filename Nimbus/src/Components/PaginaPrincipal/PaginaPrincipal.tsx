@@ -209,7 +209,7 @@ export function PaginaPrincipal() {
         if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada" || descricaoLower === "chuvisco irregular" || descricaoLower === "aguaceiros fracos" || descricaoLower === "chuvisco" || descricaoLower === "possibilidade de chuva irregular" || descricaoLower === "chuva forte") {
             return iconeChuvaFraca;
         }
-        if (descricaoLower === "chuva fraca irregular com trovoada") {
+        if (descricaoLower === "chuva fraca irregular com trovoada" || descricaoLower === "possibilidade de trovoada") {
             return iconeChuvaTempestade;
         }
         if (descricaoLower === "possibilidade de chuva irregular") {
