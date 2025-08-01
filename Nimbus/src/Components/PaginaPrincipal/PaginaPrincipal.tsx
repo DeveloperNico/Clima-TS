@@ -11,6 +11,7 @@ import iconeNevoeiro from '../../assets/Icones/Nevoeiro.png';
 import iconeChuvaFraca from '../../assets/Icones/Chuva-fraca.png';
 import iconePossibilidadeChuva from '../../assets/Icones/Possibilidade-chuva.jpg';
 import iconeChuva from '../../assets/Icones/Icone-Chuva.svg';
+import iconeChuvaTempestade from '../../assets/Icones/Chuva-tempestade.jpg';
 
 interface WeatherResponse {
     location: {
@@ -25,6 +26,7 @@ interface WeatherResponse {
         wind_degree: number;
         feelslike_c: number;
         vis_km: number;
+        uv: number;
         condition: {
             text: string;
         }
@@ -55,6 +57,7 @@ export function PaginaPrincipal() {
     const [velocidadeVento, setVelocidadeVento] = useState<number | null>(null);
     const [visibilidade, setVisibilidade] = useState<number | null>(null);
     const [sensacaoTermica, setSensacaoTermica] = useState<number | null>(null);
+    const [raiosUv, setRaioUv] = useState<number | null>(null);
     const [windDegree, setWindDegree] = useState<number | null>(null);
     const [descricao, setDescricao] = useState('');
     const [dataHora, setDataHora] = useState('');
@@ -109,6 +112,7 @@ export function PaginaPrincipal() {
             setVelocidadeVento(resposta.data.current.wind_kph);
             setVisibilidade(resposta.data.current.vis_km);
             setSensacaoTermica(resposta.data.current.feelslike_c);
+            setRaioUv(resposta.data.current.uv);
             setWindDegree(resposta.data.current.wind_degree);
             setNomeCidade(resposta.data.location.name);
             setPrevisaSemana(resposta.data.forecast.forecastday);
@@ -145,6 +149,7 @@ export function PaginaPrincipal() {
             setVelocidadeVento(null);
             setWindDegree(null);
             setDescricao('');
+            setRaioUv(null);
             setNomeCidade("");
             setNomePais("");
             setDataHora("");
@@ -175,8 +180,11 @@ export function PaginaPrincipal() {
         if (descricaoLower === "nevoeiro" || descricaoLower === "neblina") {
             return iconeNevoeiro;
         }
-        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada" || descricaoLower === "chuvisco irregular" || descricaoLower === "aguaceiros fracos" || descricaoLower === "chuvisco") {
+        if (descricaoLower === "chuva fraca" || descricaoLower === "chuva moderada" || descricaoLower === "chuvisco irregular" || descricaoLower === "aguaceiros fracos" || descricaoLower === "chuvisco" || descricaoLower === "possibilidade de chuva irregular" || descricaoLower === "chuva forte") {
             return iconeChuvaFraca;
+        }
+        if (descricaoLower === "chuva fraca irregular com trovoada") {
+            return iconeChuvaTempestade;
         }
         if (descricaoLower === "possibilidade de chuva irregular") {
             return iconePossibilidadeChuva;
@@ -211,6 +219,22 @@ export function PaginaPrincipal() {
         } else {
             return 'Visibilidade ruim 🌧️';
         }
+    }
+
+    function interpretarUvIndex(uv: number): string {
+        if (uv <= 2) return 'Baixo';
+        if (uv <= 5) return 'Moderado';
+        if (uv <= 7) return 'Alto';
+        if (uv <= 10) return 'Muito Alto';
+        return 'Extremo';
+    }
+
+    function getUvIndexColor(uv: number): string {
+        if (uv <= 2) return '#4CAF50'; // Verde
+        if (uv <= 5) return '#FFEB3B'; // Amarelo
+        if (uv <= 7) return '#FF9800'; // Laranja
+        if (uv <= 10) return '#F44336'; // Vermelho
+        return '#9C27B0'; // Roxo
     }
 
     function windDegreeToText(degree: number) {
@@ -377,6 +401,23 @@ export function PaginaPrincipal() {
                                         <p className={styles.sensacaoTermicaText}>{sensacaoTermica}</p>
                                         <p className={styles.sensacaoTermicaCelsius}>ºC</p>
                                     </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={styles.uvIndexCard}>
+                        <h3>Raios UV</h3>
+                        {raiosUv !== null && (
+                            <div className={styles.uvIndexContainer}>
+                                <div className={styles.uvIndexInfo}>
+                                    <div className={styles.uvIndex}>
+                                        <p className={styles.uvIndexText}>{raiosUv}</p>
+                                    </div>
+                                    <p className={styles.uvIndexDescription}>{interpretarUvIndex(raiosUv)}</p>
+                                </div>
+                                <div className={styles.uvIndexBar}>
+                                    <div className={styles.uvIndexIndicator} style={{ width: `${Math.min(100, (raiosUv / 12) * 100)}%`, backgroundColor: getUvIndexColor(raiosUv)}} />
                                 </div>
                             </div>
                         )}
