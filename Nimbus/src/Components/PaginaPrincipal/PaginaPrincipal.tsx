@@ -12,6 +12,8 @@ import iconeChuvaFraca from '../../assets/Icones/Chuva-fraca.png';
 import iconePossibilidadeChuva from '../../assets/Icones/Possibilidade-chuva.jpg';
 import iconeChuva from '../../assets/Icones/Icone-Chuva.svg';
 import iconeChuvaTempestade from '../../assets/Icones/Chuva-tempestade.jpg';
+import iconeNascerSol from '../../assets/Icones/nascer-sol.jpg';
+import iconePorSol from '../../assets/Icones/por-sol.jpg';
 
 interface WeatherResponse {
     location: {
@@ -35,6 +37,12 @@ interface WeatherResponse {
     forecast: {
         forecastday: {
             date: string;
+            astro: {
+                sunrise: string;
+                sunset: string;
+                moonrise: string;
+                moonset: string;
+            }
             day: {
                 daily_chance_of_rain: number;
                 condition: {
@@ -59,6 +67,8 @@ export function PaginaPrincipal() {
     const [sensacaoTermica, setSensacaoTermica] = useState<number | null>(null);
     const [raiosUv, setRaioUv] = useState<number | null>(null);
     const [windDegree, setWindDegree] = useState<number | null>(null);
+    const [nascerDoSol, setNascerDoSol] = useState('');
+    const [porDoSol, setPorDoSol] = useState('');
     const [descricao, setDescricao] = useState('');
     const [dataHora, setDataHora] = useState('');
     const [imagemCidade, setImagemCidade] = useState<string | null>(null);
@@ -84,6 +94,20 @@ export function PaginaPrincipal() {
         const dataFormatada = formatter.format(date);
         
         return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+    }
+
+    function formatarHora(hora: string): string {
+        // Converte "06:12 AM" ou "06:12 PM" para formato 24h
+        const [time, period] = hora.split(' ');
+        let [hours, minutes] = time.split(':');
+        
+        if (period === 'PM' && hours !== '12') {
+            hours = String(parseInt(hours, 10) + 12);
+        } else if (period === 'AM' && hours === '12') {
+            hours = '00';
+        }
+        
+        return `${hours}:${minutes}`;
     }
 
     // Buscar imagem de uma cidade
@@ -112,6 +136,8 @@ export function PaginaPrincipal() {
             setVelocidadeVento(resposta.data.current.wind_kph);
             setVisibilidade(resposta.data.current.vis_km);
             setSensacaoTermica(resposta.data.current.feelslike_c);
+            setNascerDoSol(resposta.data.forecast.forecastday[0].astro.sunrise);
+            setPorDoSol(resposta.data.forecast.forecastday[0].astro.sunset);
             setRaioUv(resposta.data.current.uv);
             setWindDegree(resposta.data.current.wind_degree);
             setNomeCidade(resposta.data.location.name);
@@ -418,6 +444,22 @@ export function PaginaPrincipal() {
                                 </div>
                                 <div className={styles.uvIndexBar}>
                                     <div className={styles.uvIndexIndicator} style={{ width: `${Math.min(100, (raiosUv / 12) * 100)}%`, backgroundColor: getUvIndexColor(raiosUv)}} />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={styles.solCard}>
+                        <h3>Horário do Sol</h3>
+                        {nascerDoSol && porDoSol && (
+                            <div className={styles.solTimes}>
+                                <div className={styles.solItem}>
+                                    <img src={iconeNascerSol} alt="Nascer do sol" className={styles.solIcon} />
+                                    <span>{formatarHora(nascerDoSol)}</span>
+                                </div>
+                                <div className={styles.solItem}>
+                                    <img src={iconePorSol} alt="Pôr do sol" className={styles.solIcon} />
+                                    <span>{formatarHora(porDoSol)}</span>
                                 </div>
                             </div>
                         )}
