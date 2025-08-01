@@ -31,6 +31,7 @@ interface WeatherResponse {
     };
     forecast: {
         forecastday: {
+            date: string;
             day: {
                 daily_chance_of_rain: number;
                 condition: {
@@ -62,7 +63,7 @@ export function PaginaPrincipal() {
     // Chave da API e URL
     const api_key = "7390a3ebcad0412a96a161627252907";
     const unsplash_key = "OofVb_f66byugffRDYq0IfViKMn1zc2-AMGDDRcBgsM";
-    const url = `https://api.weatherapi.com/v1/forecast.json?key=${api_key}&q=${cidade}&lang=pt&days=7`;
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${api_key}&q=${cidade}&lang=pt&days=7&`;
 
     // Função para calcular o dia da semana e a hora com base no fuso horário
     function calcularHoraLocal(timestamp: number, fusoHorario: string) {
@@ -206,7 +207,7 @@ export function PaginaPrincipal() {
             return 'Visibilidade ruim 🌧️';
         }
     }
-    
+
     function windDegreeToText(degree: number) {
         const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
         const index = Math.round(degree / 22.5) % 16;
@@ -309,6 +310,7 @@ export function PaginaPrincipal() {
                 <div className={styles.destaquesHoje}>
                     <h2>Destaques de hoje</h2>
                 </div>
+
                 <div className={styles.cardsDestaques}>
                     <div className={styles.umidadeCard}>
                         <h3>Umidade</h3>
@@ -327,6 +329,7 @@ export function PaginaPrincipal() {
                             </div>
                         )}
                     </div>
+
                     <div className={styles.velocidadeVentoCard}>
                         <h3>Velocidade do vento</h3>
                         {velocidadeVento !== null && (
@@ -337,6 +340,24 @@ export function PaginaPrincipal() {
                                         <p className={styles.velocidadePorHora}>Km/h</p>
                                     </div>
                                     <p className={styles.direcaoVento}>{windDegreeToText(windDegree)}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={styles.visibilidadeCard}>
+                        <h3>Visibilidade</h3>
+                        {visibilidade !== null && (
+                            <div className={styles.visibilidadeContainer}>
+                                <div className={styles.visibilidadeInfo}>
+                                    <div className={styles.visibilidade}>
+                                        <p className={styles.visibilidadeText}>{visibilidade}</p>
+                                        <p className={styles.visibilidadePorHora}>Km</p>
+                                    </div>
+                                    <p className={styles.visibilidadeDescricao}>{interpretarVisibilidade(visibilidade)}</p>
+                                </div>
+                                <div className={styles.visibilidadeBarra}>
+                                    <div className={styles.visibilidadeIndicador} style={{ top: `${120 - (visibilidade * 1.2)}px` }}/>
                                 </div>
                             </div>
                         )}
